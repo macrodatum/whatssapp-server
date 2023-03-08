@@ -10,6 +10,22 @@ let clientW = null;
 app.use(express.static('public'));
 
 app.get('/register', (req, res) => {
+  
+    res.send('Iniciando BOT-CHARMSS')
+})
+
+app.get('/send', (req, res)=>{
+  //1. desempacar el codigicado/encriptado
+  //2. obtener la parte del telefono y de correo al cual se va a enviar la informacion
+  //3. validar la existencia del telefono en el sistem mediante un servicio
+  //4. si el proceso es true enviar la informacion mediante un mensaje 
+  //5. si no es true, registrar enviar un reporte por el servicio de logs de charmss.com
+    clientW.sendText('573202649850@c.us', 'Welcome Venom 🕷')
+    res.send('OK')
+})
+  
+app.listen(port, () => {
+
   venom
   .create(
   'charmss-notifications',
@@ -47,21 +63,6 @@ app.get('/register', (req, res) => {
   .catch((erro) => {
       console.log(erro);
   });
-    res.send('Iniciando BOT-CHARMSS')
-})
-
-app.get('/send', (req, res)=>{
-  //1. desempacar el codigicado/encriptado
-  //2. obtener la parte del telefono y de correo al cual se va a enviar la informacion
-  //3. validar la existencia del telefono en el sistem mediante un servicio
-  //4. si el proceso es true enviar la informacion mediante un mensaje 
-  //5. si no es true, registrar enviar un reporte por el servicio de logs de charmss.com
-    clientW.sendText('573202649850@c.us', 'Welcome Venom 🕷')
-    res.send('OK')
-})
-  
-app.listen(port, () => {
-
   
     console.log(`Server on ${port}`)
 })
