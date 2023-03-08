@@ -3,7 +3,7 @@ const fs = require('fs');
 const venom = require('venom-bot');
 const app = express()
 
-const port = 80
+const port = 8080
 
 let clientW = null;
 
