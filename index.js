@@ -59,8 +59,10 @@ app.listen(port, () => {
   .then((client) => {
       clientW = client;
       start(client)
+      console.log(client);
   })
   .catch((erro) => {
+      console.log("Error generated for QRCode");
       console.log(erro);
   });
   
