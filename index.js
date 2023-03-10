@@ -1,7 +1,12 @@
 const express = require('express')
 const fs = require('fs');
 const venom = require('venom-bot');
+const axios = require('axios');
 const app = express()
+var bodyParser = require('body-parser')
+
+var jsonParser = bodyParser.json()
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 const port = 8080
 
@@ -9,23 +14,28 @@ let clientW = null;
 
 app.use(express.static('public'));
 
-app.get('/register', (req, res) => {
-  
-    res.send('Iniciando BOT-CHARMSS')
-})
-
-app.get('/send', (req, res)=>{
-  //1. desempacar el codigicado/encriptado
-  //2. obtener la parte del telefono y de correo al cual se va a enviar la informacion
-  //3. validar la existencia del telefono en el sistem mediante un servicio
-  //4. si el proceso es true enviar la informacion mediante un mensaje 
-  //5. si no es true, registrar enviar un reporte por el servicio de logs de charmss.com
-    clientW.sendText('573202649850@c.us', 'Welcome Venom 🕷')
-    res.send('OK')
+app.post('/send', jsonParser, (req, res)=>{
+  try {
+    let wsId = req.body.id;
+    let message = req.body.message;
+    let typeMessage = req.body.type;
+    switch (typeMessage) {
+      case "text":
+        clientW.sendText(wsId+'@c.us', message)
+        break;
+    
+      default:
+        clientW.sendText(wsId+'@c.us', "unsupportedType: " + typeMessage +" [text, btn, link, imgb64]:: "+ message)
+        break;
+    }
+    res.sendStatus(200)
+  } catch (error) {
+      console.log(error)
+      res.sendStatus(400)
+  }
 })
   
 app.listen(port, () => {
-
   venom
   .create(
   'charmss-notifications',
@@ -53,8 +63,17 @@ app.listen(port, () => {
       }
     );
   },
-  undefined,
-  { logQR: false }
+    // statusFind
+    (statusSession, session) => {
+      console.log('Status Session: ', statusSession); //return isLogged || notLogged || browserClose || qrReadSuccess || qrReadFail || autocloseCalled || desconnectedMobile || deleteToken || chatsAvailable || deviceNotConnected || serverWssNotConnected || noOpenBrowser || initBrowser || openBrowser || connectBrowserWs || initWhatsapp || erroPageWhatsapp || successPageWhatsapp || waitForLogin || waitChat || successChat
+      //Create session wss return "serverClose" case server for close
+      console.log('Session name: ', session);
+    },
+  { logQR: false,
+    devtools: false, // Open devtools by default
+      useChrome: false, // If false will use Chromium instance
+      debug: true, // Opens a debug session
+   }
   )
   .then((client) => {
       clientW = client;
@@ -70,20 +89,68 @@ app.listen(port, () => {
 })
 
   function start(client) {
+    let urlPerformer = "https://api.charmss.com/api/account/whatsapp"
+    let urlClient = "https://api.charmss.com/api/customer/whatsapp"
     client.onMessage((message) => {
-      if (message.body === 'performer::' && message.isGroupMsg === false) {
-        //1. consultar un servicio para revisar si el correo con el telefono coinciden en la base de datos.
-        //2. obtener la respuesta del servidor 
-        //3. si la respuesta es ok, enviar mensaje de registrado
-        //4. si el mensaje es diferente a ok, imprimir el error en un mensaje de caso en un mensaje de whatsapp
-        client
-          .sendText(message.from, 'Whastapp registered-please go to https://performers.charmss.com')
-          .then((result) => {
-            console.log('Result: ', result);
-          })
-          .catch((erro) => {
-            console.error('Error when sending: ', erro);
-          });
+      if (message.body.includes('performer::') && message.isGroupMsg === false) {
+        axios.post(url, {
+          whatsappId: wsId,
+        })
+        .then((response) => {
+          if(response === "ok"){//deberia llegar el nombre de la modelo?
+            client
+            .sendText(message.from, 'CharmssBOT your number has been registed, please go to https://performers.charmss.com')
+            .then((result) => {
+              console.log('Result: ', result);
+            })
+            .catch((erro) => {
+              console.error('Error when sending: ', erro);
+            });
+          }
+          else{
+            client
+            .sendText(message.from, 'CharmssBOT: your whatsapp number is not registered in our system please contact our support team at support@livecharmss.com.co')
+            .then((result) => {
+              console.log('Result: ', result);
+            })
+            .catch((erro) => {
+              console.error('Error when sending: ', erro);
+            });
+          }
+
+        }, (error) => {
+          console.error(" Error validating whatsappId " + error);
+        });
+      }
+      else if (message.body.includes('client::') && message.isGroupMsg === false) {
+        axios.post(url, {
+          whatsappId: wsId,
+        })
+        .then((response) => {
+          if(response === "ok"){//deberia llegar el nombre de la modelo?
+            client
+            .sendText(message.from, 'CharmssBOT your number has been registed, please go to https://www.livecharmss.com')
+            .then((result) => {
+              console.log('Result: ', result);
+            })
+            .catch((erro) => {
+              console.error('Error when sending: ', erro);
+            });
+          }
+          else{
+            client
+            .sendText(message.from, 'CharmssBOT: your whatsapp number is not registered in our system please contact our support team at support@livecharmss.com.co')
+            .then((result) => {
+              console.log('Result: ', result);
+            })
+            .catch((erro) => {
+              console.error('Error when sending: ', erro);
+            });
+          }
+
+        }, (error) => {
+          console.error(" Error validating whatsappId " + error);
+        });
       }
     });
   }
