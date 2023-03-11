@@ -21,11 +21,15 @@ app.post('/send', jsonParser, (req, res)=>{
     let typeMessage = req.body.type;
     switch (typeMessage) {
       case "text":
-        clientW.sendText(wsId+'@c.us', message)
+        clientW.sendText(wsId+'@c.us', message).then((result)=>{
+          console.log(result)
+        })
         break;
     
       default:
-        clientW.sendText(wsId+'@c.us', "unsupportedType: " + typeMessage +" [text, btn, link, imgb64]:: "+ message)
+        clientW.sendText(wsId+'@c.us', "unsupportedType: " + typeMessage +" [text, btn, link, imgb64]:: "+ message).then((result)=>{
+          console.log(result)
+        })
         break;
     }
     res.sendStatus(200)
