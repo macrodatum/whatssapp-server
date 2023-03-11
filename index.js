@@ -69,11 +69,7 @@ app.listen(port, () => {
       //Create session wss return "serverClose" case server for close
       console.log('Session name: ', session);
     },
-  { logQR: false,
-    devtools: false, // Open devtools by default
-      useChrome: false, // If false will use Chromium instance
-      debug: true, // Opens a debug session
-   }
+  { logQR: false }
   )
   .then((client) => {
       clientW = client;
@@ -93,7 +89,7 @@ app.listen(port, () => {
     let urlClient = "https://api.charmss.com/api/customer/whatsapp"
     client.onMessage((message) => {
       if (message.body.includes('performer::') && message.isGroupMsg === false) {
-        axios.post(url, {
+        axios.post(urlPerformer, {
           whatsappId: wsId,
         })
         .then((response) => {
@@ -123,7 +119,7 @@ app.listen(port, () => {
         });
       }
       else if (message.body.includes('client::') && message.isGroupMsg === false) {
-        axios.post(url, {
+        axios.post(urlClient, {
           whatsappId: wsId,
         })
         .then((response) => {
