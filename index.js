@@ -14,6 +14,31 @@ let clientW = null;
 
 app.use(express.static('public'));
 
+app.post('/ping', jsonParser, (req, res)=>{
+  try {
+    let wsId = req.body.id;
+    let message = "ping "+(new Date()).getTime();
+    let typeMessage = req.body.type;
+    switch (typeMessage) {
+      case "text":
+        clientW.sendText(wsId+'@c.us', message).then((result)=>{
+          console.log(result)
+        })
+        break;
+    
+      default:
+        clientW.sendText(wsId+'@c.us', "unsupportedType: " + typeMessage +" [text, btn, link, imgb64]:: "+ message).then((result)=>{
+          console.log(result)
+        })
+        break;
+    }
+    res.sendStatus(200)
+  } catch (error) {
+      console.log(error)
+      res.sendStatus(400)
+  }
+})
+
 app.post('/send', jsonParser, (req, res)=>{
   try {
     let wsId = req.body.id;
@@ -89,15 +114,17 @@ app.listen(port, () => {
 })
 
   function start(client) {
-    let urlPerformer = "https://api.charmss.com/api/account/whatsapp"
+    let urlPerformer = "http://api.charmss.com/api/account/whatsapp"
     let urlClient = "https://api.charmss.com/api/customer/whatsapp"
     client.onMessage((message) => {
       if (message.body.includes('performer::') && message.isGroupMsg === false) {
+        console.log("url", urlPerformer)
         axios.post(urlPerformer, {
-          whatsappId: wsId,
+          whatsappId: message.body,
         })
         .then((response) => {
-          if(response === "ok"){//deberia llegar el nombre de la modelo?
+          
+          if(response.data.data === "ok"){//deberia llegar el nombre de la modelo?
             client
             .sendText(message.from, 'CharmssBOT your number has been registed, please go to https://performers.charmss.com')
             .then((result) => {
@@ -124,10 +151,10 @@ app.listen(port, () => {
       }
       else if (message.body.includes('client::') && message.isGroupMsg === false) {
         axios.post(urlClient, {
-          whatsappId: wsId,
+          whatsappId: message.body,
         })
         .then((response) => {
-          if(response === "ok"){//deberia llegar el nombre de la modelo?
+          if(response.data.data === "ok"){//deberia llegar el nombre de la modelo?
             client
             .sendText(message.from, 'CharmssBOT your number has been registed, please go to https://www.livecharmss.com')
             .then((result) => {
