@@ -50,6 +50,7 @@ app.post('/send', jsonParser, (req, res)=>{
     let imageUrl = req.body.imageUrl;
     let imageName = req.body.imageName;
     let fileUriTemp = ""
+    console.log("send", typeMessage)
     switch (typeMessage) {
       case "text":
         clientW.sendText(wsId+'@c.us', message).then((result)=>{
@@ -74,12 +75,6 @@ app.post('/send', jsonParser, (req, res)=>{
           .catch((erro) => {
             console.error('Error when sending: ', erro); //return object error
           });
-        
-  
-            clientW.sendText(wsId+'@c.us', message).then((result)=>{
-              console.log(result)
-            })
-
         })
 
 
