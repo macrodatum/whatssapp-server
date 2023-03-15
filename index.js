@@ -143,6 +143,7 @@ app.listen(port, () => {
     let urlPerformer = "http://api.charmss.com/api/account/whatsapp"
     let urlClient = "https://api.charmss.com/api/customer/whatsapp"
     let urlClientCancel = "https://api.charmss.com/api/customer/whatsappcancel"
+
     client.onMessage((message) => {    
       if (message.body.includes('performer::') && message.isGroupMsg === false) {
         axios.post(urlPerformer, {
@@ -179,7 +180,7 @@ app.listen(port, () => {
       }
       else if(message.type == 'reply'){
         let acceptKey = message.body.toLowerCase();
-        let quotedMsg = message.quotedMsg.body;
+        let quotedMsg = message.quotedMsg.caption;
 
         if(!acceptKey.includes('accept')){
           client
