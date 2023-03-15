@@ -144,7 +144,8 @@ app.listen(port, () => {
     let urlClient = "https://api.charmss.com/api/customer/whatsapp"
     let urlClientCancel = "https://api.charmss.com/api/customer/whatsappcancel"
 
-    client.onMessage((message) => {    
+    client.onMessage((message) => { 
+      console.log(message)   
       if (message.body.includes('performer::') && message.isGroupMsg === false) {
         axios.post(urlPerformer, {
           whatsappId: message.body,
