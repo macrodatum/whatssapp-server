@@ -67,7 +67,7 @@ app.post('/send', jsonParser, (req, res)=>{
             message
           )
           .then((result) => {
-            //deleteImage(fileUriTemp);
+            deleteImage(fileUriTemp);
             fileUriTemp = "";
             console.log('Result: ', result); //return object success
           })
