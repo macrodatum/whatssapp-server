@@ -50,11 +50,10 @@ app.post('/send', jsonParser, (req, res)=>{
     let imageUrl = req.body.imageUrl;
     let imageName = req.body.imageName;
     let fileUriTemp = ""
-    console.log("send", typeMessage)
     switch (typeMessage) {
       case "text":
         clientW.sendText(wsId+'@c.us', message).then((result)=>{
-          console.log(result)
+          console.log("send text :: "+result)
         })
         break;
       case "image":
@@ -70,19 +69,17 @@ app.post('/send', jsonParser, (req, res)=>{
           .then((result) => {
             deleteImage(fileUriTemp);
             fileUriTemp = "";
-            console.log('Result: ', result); //return object success
+            console.log('Result image :: ', result); //return object success
           })
           .catch((erro) => {
             console.error('Error when sending: ', erro); //return object error
           });
         })
-
-
-          break;
+        break;
     
       default:
         clientW.sendText(wsId+'@c.us', "unsupportedType: " + typeMessage +" [text, btn, link, imgb64]:: "+ message).then((result)=>{
-          console.log(result)
+          console.log("unknow message type :: "+result)
         })
         break;
     }
@@ -145,17 +142,19 @@ app.listen(port, () => {
   function start(client) {
     let urlPerformer = "http://api.charmss.com/api/account/whatsapp"
     let urlClient = "https://api.charmss.com/api/customer/whatsapp"
-    client.onMessage((message) => {
+    let urlClientCancel = "https://api.charmss.com/api/customer/whatsappcancel"
+    client.onMessage((message) => {    
       if (message.body.includes('performer::') && message.isGroupMsg === false) {
-        console.log("url", urlPerformer)
         axios.post(urlPerformer, {
           whatsappId: message.body,
         })
         .then((response) => {
-          
-          if(response.data.data === "ok"){//deberia llegar el nombre de la modelo?
+          if(response.data.data === "ok"){
             client
-            .sendText(message.from, 'CharmssBOT your number has been registed, please go to https://performers.charmss.com')
+            .sendImage(message.from, 
+              __dirname + "/public/images/logocharmss.jpg",
+              "logocharmss.jpg",
+              'CharmssBOT your number has been registed, please go to https://performers.charmss.com')
             .then((result) => {
               console.log('Result: ', result);
             })
@@ -178,14 +177,72 @@ app.listen(port, () => {
           console.error(" Error validating whatsappId " + error);
         });
       }
-      else if (message.body.includes('client::') && message.isGroupMsg === false) {
-        axios.post(urlClient, {
-          whatsappId: message.body,
+      else if(message.type == 'reply'){
+        let acceptKey = message.body.toLowerCase();
+        let quotedMsg = message.quotedMsg.body;
+
+        if(!acceptKey.includes('accept')){
+          client
+            .sendText(message.from, 'Please Reply to the security message (client::XXXXX-XXXXXXXXXXX) that has come to your WhatsApp with the word accept. support@livecharmss.com.co')
+            .then((result) => {
+              console.log('Result: ', result);
+            })
+            .catch((erro) => {
+              console.error('Error when sending: ', erro);
+            });
+        }
+        else{
+          axios.post(urlClient, {
+            whatsappId: quotedMsg,
+          })
+          .then((response) => {
+            if(response.data.data === "ok"){
+              client
+              .sendImage(
+                message.from, 
+                __dirname + "/public/images/logocharmss.jpg",
+                "logocharmss.jpg",
+                'CharmssBOT your number has been registed, please go to https://www.livecharmss.com. if you want to delete this notifications send message at this contact with the word "cancel"')
+              .then((result) => {
+                console.log('Result: ', result);
+              })
+              .catch((erro) => {
+                console.error('Error when sending: ', erro);
+              });
+            }
+            else{
+              client
+              .sendText(message.from, 'CharmssBOT: your whatsapp number is not registered in our clients system please contact our support team at support@livecharmss.com.co')
+              .then((result) => {
+                console.log('Result: ', result);
+              })
+              .catch((erro) => {
+                console.error('Error when sending: ', erro);
+              });
+            }
+          }, (error) => {
+            console.error(" Error validating whatsappId " + error);
+          });
+        }
+      }
+      else if (message.body.toLowerCase().includes('accept') && message.isGroupMsg === false) {
+        client
+        .sendText(message.from, 'Please Reply to the security message (client::XXXXX-XXXXXXXXXXX) that has come to your WhatsApp from this contact with the word accept. support@livecharmss.com.co')
+        .then((result) => {
+          console.log('Result: ', result);
+        })
+        .catch((erro) => {
+          console.error('Error when sending: ', erro);
+        });
+      }
+      else if (message.body.toLowerCase().includes('cancel') && message.isGroupMsg === false) {
+        axios.post(urlClientCancel, {
+          whatsappId: message.from,
         })
         .then((response) => {
-          if(response.data.data === "ok"){//deberia llegar el nombre de la modelo?
+          if(response.data.data === "ok"){
             client
-            .sendText(message.from, 'CharmssBOT your number has been registed, please go to https://www.livecharmss.com')
+            .sendText(message.from, 'CharmssBOT your whatsapp contact has been deleted from https://www.livecharmss.com')
             .then((result) => {
               console.log('Result: ', result);
             })
@@ -195,7 +252,7 @@ app.listen(port, () => {
           }
           else{
             client
-            .sendText(message.from, 'CharmssBOT: your whatsapp number is not registered in our system please contact our support team at support@livecharmss.com.co')
+            .sendText(message.from, 'CharmssBOT: your whatsapp number is not registered in our client system please contact our support team at support@livecharmss.com.co')
             .then((result) => {
               console.log('Result: ', result);
             })
@@ -203,7 +260,6 @@ app.listen(port, () => {
               console.error('Error when sending: ', erro);
             });
           }
-
         }, (error) => {
           console.error(" Error validating whatsappId " + error);
         });
