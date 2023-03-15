@@ -44,12 +44,34 @@ app.post('/send', jsonParser, (req, res)=>{
     let wsId = req.body.id;
     let message = req.body.message;
     let typeMessage = req.body.type;
+    let imageUrl = req.body.imageUrl;
+    let imageName = req.body.imageName;
     switch (typeMessage) {
       case "text":
         clientW.sendText(wsId+'@c.us', message).then((result)=>{
           console.log(result)
         })
         break;
+      case "image":
+         clientW
+        .sendImage(
+          wsId+'@c.us',
+          imageUrl,
+          imageName,
+          message
+        )
+        .then((result) => {
+          console.log('Result: ', result); //return object success
+        })
+        .catch((erro) => {
+          console.error('Error when sending: ', erro); //return object error
+        });
+      
+
+          clientW.sendText(wsId+'@c.us', message).then((result)=>{
+            console.log(result)
+          })
+          break;
     
       default:
         clientW.sendText(wsId+'@c.us', "unsupportedType: " + typeMessage +" [text, btn, link, imgb64]:: "+ message).then((result)=>{
