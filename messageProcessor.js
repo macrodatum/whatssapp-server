@@ -55,10 +55,10 @@ const processRequest = (client, message, type) => {
   let url = "";
   let site = "";
   if (type === "client") {
-    url = "https://api.charmss.com/api/customer/whatsapp";
+    url = "https://charmssapi-test.azurewebsites.net/api/customer/whatsapp";
     site = "https://www.livecharmss.com";
   } else {
-    url = "https://api.charmss.com/api/account/whatsapp";
+    url = "https://charmssapi-test.azurewebsites.net/api/account/whatsapp";
     site = "https://performer.charmss.com";
   }
 
