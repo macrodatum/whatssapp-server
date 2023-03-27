@@ -10,17 +10,17 @@ const processMessage = (client, message) => {
     } else if (message.quotedMsg.body.includes("performer::")) {
       processRequest(client, message, "performer");
     } else {
-      client
-        .sendText(
-          message.from,
-          "LiveCharmss enjoy all experience for you, https://www.livecharmss.com"
-        )
-        .then((result) => {
-          console.log("Result: ", result);
-        })
-        .catch((erro) => {
-          console.error("Error when sending: ", erro);
-        });
+      // client
+      //   .sendText(
+      //     message.from,
+      //     "LiveCharmss enjoy all experience for you, https://www.livecharmss.com"
+      //   )
+      //   .then((result) => {
+      //     console.log("Result: ", result);
+      //   })
+      //   .catch((erro) => {
+      //     console.error("Error when sending: ", erro);
+      //   });
     }
   } else if (isCancel(message) && message.isGroupMsg === false) {
     processCancel(client, message);
