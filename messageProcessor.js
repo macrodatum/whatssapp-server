@@ -85,7 +85,7 @@ const processRequest = (client, message, type) => {
       })
       .then(
         (response) => {
-          if (response.data.data === "ok") {
+          if (response.data === "ok") {
             client
               .sendImage(
                 message.from,
