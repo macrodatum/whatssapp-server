@@ -59,7 +59,7 @@ const processRequest = (client, message, type) => {
   var endpoint = message.sandbox
     ? "https://charmssapi-test.azurewebsites.net"
     : "https://api.charmss.com";
-
+  console.log(endpoint);
   if (type === "client") {
     url = `${endpoint}/api/customer/whatsapp`;
     site = "https://www.livecharmss.com";
