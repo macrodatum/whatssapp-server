@@ -54,11 +54,16 @@ const ErrorRequestAccept = (message) => {
 const processRequest = (client, message, type) => {
   let url = "";
   let site = "";
+
+  var endpoint = message.sandbox
+    ? "https://charmssapi-test.azurewebsites.net"
+    : "https://api.charmss.com";
+
   if (type === "client") {
-    url = "https://charmssapi-test.azurewebsites.net/api/customer/whatsapp";
+    url = `${endpoint}/api/customer/whatsapp`;
     site = "https://www.livecharmss.com";
   } else {
-    url = "https://charmssapi-test.azurewebsites.net/api/account/whatsapp";
+    url = `${endpoint}/api/account/whatsapp`;
     site = "https://performer.charmss.com";
   }
 
