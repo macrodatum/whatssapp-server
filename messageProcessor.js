@@ -92,7 +92,7 @@ const processRequest = (client, message, type) => {
       })
       .then(
         (response) => {
-          if (response.data === "ok") {
+          if (response.statusText.toLowerCase() === "ok") {
             client
               .sendImage(
                 message.from,
@@ -135,7 +135,7 @@ const processCancel = (client, message) => {
     })
     .then(
       (response) => {
-        if (response.data.data === "ok") {
+        if (response.data.data.toLowerCase() === "ok") {
           client
             .sendText(
               message.from,
