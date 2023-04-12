@@ -52,6 +52,7 @@ const ErrorRequestAccept = (message) => {
 };
 
 const processRequest = (client, message, type) => {
+  console.log("processRequest", client, message, type);
   let url = "";
   let site = "";
 
