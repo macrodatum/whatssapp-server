@@ -78,6 +78,7 @@ const processRequest = (client, message, type) => {
         `Please Reply to the security message (${type}::XXXXX-XXXXXXXXXXX) that has come to your WhatsApp with the word accept. support@livecharmss.com.co`
       )
       .then((result) => {
+        console.log("Result: " + message.from + "message for Reply");
         console.log("Result: ", result);
       })
       .catch((erro) => {
@@ -100,7 +101,7 @@ const processRequest = (client, message, type) => {
                 `CharmssBOT your number has been registed, please go to ${site}. if you want to delete this notifications send message at this contact with the word "cancel"`
               )
               .then((result) => {
-                console.log("Result: ", result);
+                console.log("Result: " + message.from + "registered");
               })
               .catch((erro) => {
                 console.error("Error when sending: ", erro);
@@ -112,7 +113,7 @@ const processRequest = (client, message, type) => {
                 "CharmssBOT: your whatsapp number is not registered in our system please contact our support team at support@livecharmss.com.co"
               )
               .then((result) => {
-                console.log("Result: ", result);
+                console.log("Result: " + message.from + "NOT registered");
               })
               .catch((erro) => {
                 console.error("Error when sending: ", erro);
