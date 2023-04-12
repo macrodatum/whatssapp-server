@@ -10,7 +10,7 @@ var processMessage = require("./messageProcessor");
 var jsonParser = bodyParser.json();
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
-const port = 8081;
+const port = 8080;
 
 let clientW = null;
 
